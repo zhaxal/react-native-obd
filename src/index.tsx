@@ -24,3 +24,7 @@ export function multiply(a: number, b: number): Promise<number> {
 export function initializeBluetooth(): Promise<boolean> {
   return Obd.initializeBluetooth();
 }
+
+export function getPairedDevices(): Promise<Array<object>> {
+  return Obd.getPairedDevices();
+}
