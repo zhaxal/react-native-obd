@@ -20,3 +20,7 @@ const Obd = NativeModules.Obd
 export function multiply(a: number, b: number): Promise<number> {
   return Obd.multiply(a, b);
 }
+
+export function initializeBluetooth(): Promise<boolean> {
+  return Obd.initializeBluetooth();
+}

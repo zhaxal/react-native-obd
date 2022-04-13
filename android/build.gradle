@@ -21,7 +21,7 @@ def safeExtGet(prop, fallback) {
 android {
     compileSdkVersion safeExtGet('Obd_compileSdkVersion', 29)
     defaultConfig {
-        minSdkVersion safeExtGet('Obd_minSdkVersion', 16)
+        minSdkVersion safeExtGet('Obd_minSdkVersion', 18)
         targetSdkVersion safeExtGet('Obd_targetSdkVersion', 29)
         versionCode 1
         versionName "1.0"
@@ -56,4 +56,5 @@ repositories {
 dependencies {
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
+    implementation 'com.github.pires:obd-java-api:1.0'
 }
