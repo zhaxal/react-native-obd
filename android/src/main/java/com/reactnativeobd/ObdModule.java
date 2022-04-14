@@ -44,8 +44,7 @@ public class ObdModule extends ReactContextBaseJavaModule {
   }
 
   public static native WritableArray getPairedDevices();
-
-
+  
 
 
 }

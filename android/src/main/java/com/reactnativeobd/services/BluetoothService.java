@@ -4,21 +4,27 @@ import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
+import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 
-import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeArray;
 import com.facebook.react.bridge.WritableNativeMap;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.github.pires.obd.commands.ObdCommand;
+import com.github.pires.obd.commands.engine.RPMCommand;
+import com.github.pires.obd.commands.protocol.EchoOffCommand;
 import com.google.gson.Gson;
 import com.reactnativeobd.Device;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
@@ -29,12 +35,30 @@ public class BluetoothService {
   private BluetoothAdapter bluetoothAdapter;
   private Set<BluetoothDevice> pairedDevices;
   private ReactApplicationContext context;
+  private RPMCommand rpmCommand;
+  private BluetoothSocket socket;
 
   public BluetoothService(ReactApplicationContext context) {
     this.context = context;
     BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
+    this.rpmCommand = new RPMCommand();
     this.bluetoothAdapter = bluetoothManager.getAdapter();
   }
+
+  private final Runnable rpmRunnable = new Runnable() {
+    public void run() {
+      try {
+        rpmCommand.run(socket.getInputStream(), socket.getOutputStream());
+        context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("rpmUpdate", rpmCommand.getFormattedResult());
+      } catch (IOException e) {
+        e.printStackTrace();
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+      // run again in period defined in preferences
+      new Handler().postDelayed(rpmRunnable, 1000);
+    }
+  };
 
   private void enableBluetooth() {
     Activity activity = context.getCurrentActivity();
@@ -86,5 +110,23 @@ public class BluetoothService {
       }
     }
     return map;
+  }
+
+  public void connectDevice(String address) throws IOException {
+    if (pairedDevices.size() > 0) {
+      // There are paired devices. Get the name and address of each paired device.
+      for (BluetoothDevice device : pairedDevices) {
+        String deviceHardwareAddress = device.getAddress(); // MAC address
+        if (address.equals(deviceHardwareAddress)) {
+          socket = device.createRfcommSocketToServiceRecord(MY_UUID);
+        }
+      }
+
+    }
+  }
+
+  public void test() throws IOException, InterruptedException {
+
+
   }
 }
