@@ -42,14 +42,14 @@ public class ObdModule extends ReactContextBaseJavaModule {
   public static final String NAME = "Obd";
   private BluetoothAdapter bluetoothAdapter;
   private BluetoothManager bluetoothManager;
-  private Set<BluetoothDevice> scannedDevices;
+  private final List<BluetoothDevice> scannedDevices;
   private int testValue = 0;
   ReactApplicationContext context;
 
   public ObdModule(ReactApplicationContext context) {
     super(context);
     this.context = context;
-    this.scannedDevices = Collections.emptySet();
+    this.scannedDevices = new ArrayList<>();
   }
 
   private void enableBluetooth() {
