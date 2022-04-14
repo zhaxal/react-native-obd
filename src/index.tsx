@@ -20,3 +20,5 @@ const Obd = NativeModules.Obd
 export function getPairedDevices(): Promise<Array<object>> {
   return Obd.getPairedDevices();
 }
+
+export { Obd };
