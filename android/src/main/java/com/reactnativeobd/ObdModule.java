@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 
 import androidx.annotation.NonNull;
 
@@ -40,6 +41,7 @@ public class ObdModule extends ReactContextBaseJavaModule {
   public static final String NAME = "Obd";
   private BluetoothAdapter bluetoothAdapter;
   private BluetoothManager bluetoothManager;
+  private Set<BluetoothDevice> scannedDevices;
   ReactApplicationContext context;
 
   public ObdModule(ReactApplicationContext context) {
@@ -130,6 +132,8 @@ public class ObdModule extends ReactContextBaseJavaModule {
     List<Device> returnList = new ArrayList<>();
     Gson g = new Gson();
 
+    WritableArray array = new WritableNativeArray();
+
     if (pairedDevices.size() > 0) {
       // There are paired devices. Get the name and address of each paired device.
       for (BluetoothDevice device : pairedDevices) {
@@ -140,7 +144,63 @@ public class ObdModule extends ReactContextBaseJavaModule {
 
       }
 
-      WritableArray array = new WritableNativeArray();
+      for (Device d : returnList) {
+        JSONObject jo = new JSONObject(g.toJson(d));
+        WritableMap wm = convertJsonToMap(jo);
+        array.pushMap(wm);
+      }
+
+    } else {
+      promise.resolve(array);
+    }
+  }
+
+  public static native WritableArray getPairedDevices();
+
+
+  private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+    public void onReceive(Context context, Intent intent) {
+
+      if (BluetoothDevice.ACTION_FOUND.equals(intent.getAction())) {
+        BluetoothDevice deviceInfo = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+        scannedDevices.add(deviceInfo);
+      }
+    }
+
+
+  };
+
+
+  @ReactMethod
+  public void startScan() {
+    IntentFilter bluetoothFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+    context.registerReceiver(mReceiver, bluetoothFilter);
+    bluetoothAdapter.startDiscovery();
+  }
+
+
+  @ReactMethod
+  public void stopScan() {
+    bluetoothAdapter.startDiscovery();
+  }
+
+
+  @ReactMethod
+  public void getScannedDevices(Promise promise) throws JSONException {
+    List<Device> returnList = new ArrayList<>();
+    Gson g = new Gson();
+
+    WritableArray array = new WritableNativeArray();
+
+    if (scannedDevices.size() > 0) {
+      // There are paired devices. Get the name and address of each paired device.
+      for (BluetoothDevice device : scannedDevices) {
+        String deviceName = device.getName();
+        String deviceHardwareAddress = device.getAddress(); // MAC address
+
+        returnList.add(new Device(deviceName, deviceHardwareAddress));
+
+      }
 
       for (Device d : returnList) {
         JSONObject jo = new JSONObject(g.toJson(d));
@@ -148,11 +208,12 @@ public class ObdModule extends ReactContextBaseJavaModule {
         array.pushMap(wm);
       }
 
+    } else {
       promise.resolve(array);
     }
+
   }
 
-  public static native WritableArray getPairedDevices();
-
+  public static native WritableArray getScannedDevices();
 
 }

@@ -28,3 +28,15 @@ export function initializeBluetooth(): Promise<boolean> {
 export function getPairedDevices(): Promise<Array<object>> {
   return Obd.getPairedDevices();
 }
+
+export function startScan(): void {
+  return Obd.startScan();
+}
+
+export function stopScan(): void {
+  return Obd.stopScan();
+}
+
+export function getScannedDevices(): Promise<Array<object>> {
+  return Obd.getScannedDevices();
+}
