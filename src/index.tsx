@@ -45,6 +45,6 @@ export function getValue(): Promise<number> {
   return Obd.getValue();
 }
 
-export function updateValue(): void {
-  return Obd.updateValue();
+export function updateValue(value: number): void {
+  return Obd.updateValue(value);
 }
