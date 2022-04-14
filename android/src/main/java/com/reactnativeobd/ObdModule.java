@@ -43,16 +43,14 @@ public class ObdModule extends ReactContextBaseJavaModule {
   private BluetoothAdapter bluetoothAdapter;
   private BluetoothManager bluetoothManager;
   private final List<BluetoothDevice> scannedDevices;
+  BroadcastReceiver mReceiver;
   private int testValue = 0;
   ReactApplicationContext context;
 
   public ObdModule(ReactApplicationContext context) {
     super(context);
     this.context = context;
-    this.scannedDevices = new ArrayList<>();
-
-    IntentFilter bluetoothFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-    context.registerReceiver(mReceiver, bluetoothFilter);
+    this.scannedDevices = new ArrayList<BluetoothDevice>();
   }
 
   private void enableBluetooth() {
@@ -151,19 +149,6 @@ public class ObdModule extends ReactContextBaseJavaModule {
   public static native WritableArray getPairedDevices();
 
 
-  private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-    public void onReceive(Context context, Intent intent) {
-
-      if (BluetoothDevice.ACTION_FOUND.equals(intent.getAction())) {
-        BluetoothDevice deviceInfo = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-        scannedDevices.add(deviceInfo);
-      }
-    }
-
-
-  };
-
-
   @ReactMethod
   public void startScan() {
     Activity activity = context.getCurrentActivity();
@@ -174,12 +159,27 @@ public class ObdModule extends ReactContextBaseJavaModule {
     activity.startActivityForResult(discoverableIntent, requestCode);
 
     bluetoothAdapter.startDiscovery();
+    mReceiver = new BroadcastReceiver() {
+      public void onReceive(Context context, Intent intent) {
+        if (BluetoothDevice.ACTION_FOUND.equals(intent.getAction())) {
+          BluetoothDevice deviceInfo = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+          scannedDevices.add(deviceInfo);
+        }
+      }
+    };
+
+    IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+    context.registerReceiver(mReceiver, filter);
+
+    bluetoothAdapter.startDiscovery();
   }
 
 
   @ReactMethod
   public void stopScan() {
-    bluetoothAdapter.startDiscovery();
+
+    bluetoothAdapter.cancelDiscovery();
+    context.unregisterReceiver(mReceiver);
   }
 
 
