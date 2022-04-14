@@ -29,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -47,6 +48,7 @@ public class ObdModule extends ReactContextBaseJavaModule {
   public ObdModule(ReactApplicationContext context) {
     super(context);
     this.context = context;
+    this.scannedDevices = Collections.emptySet();
   }
 
   private void enableBluetooth() {
