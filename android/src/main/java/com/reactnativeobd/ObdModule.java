@@ -43,6 +43,7 @@ public class ObdModule extends ReactContextBaseJavaModule {
   private BluetoothAdapter bluetoothAdapter;
   private BluetoothManager bluetoothManager;
   private Set<BluetoothDevice> scannedDevices;
+  private int testValue = 0;
   ReactApplicationContext context;
 
   public ObdModule(ReactApplicationContext context) {
@@ -217,5 +218,18 @@ public class ObdModule extends ReactContextBaseJavaModule {
   }
 
   public static native WritableArray getScannedDevices();
+
+  @ReactMethod
+  public void updateValue(int value){
+    testValue = value;
+  }
+
+  @ReactMethod
+  public void getValue(Promise promise){
+    promise.resolve(testValue);
+  }
+
+  public static native int getValue();
+
 
 }

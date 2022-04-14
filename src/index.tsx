@@ -40,3 +40,11 @@ export function stopScan(): void {
 export function getScannedDevices(): Promise<Array<object>> {
   return Obd.getScannedDevices();
 }
+
+export function getValue(): Promise<number> {
+  return Obd.getValue();
+}
+
+export function updateValue(): void {
+  return Obd.updateValue();
+}
