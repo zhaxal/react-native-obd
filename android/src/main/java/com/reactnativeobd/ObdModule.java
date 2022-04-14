@@ -50,6 +50,9 @@ public class ObdModule extends ReactContextBaseJavaModule {
     super(context);
     this.context = context;
     this.scannedDevices = new ArrayList<>();
+
+    IntentFilter bluetoothFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+    context.registerReceiver(mReceiver, bluetoothFilter);
   }
 
   private void enableBluetooth() {
@@ -60,19 +63,6 @@ public class ObdModule extends ReactContextBaseJavaModule {
     }
 
   }
-
-  private final BroadcastReceiver receiver = new BroadcastReceiver() {
-    public void onReceive(Context context, Intent intent) {
-      String action = intent.getAction();
-      if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-        // Discovery has found a device. Get the BluetoothDevice
-        // object and its info from the Intent.
-        BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-        String deviceName = device.getName();
-        String deviceHardwareAddress = device.getAddress(); // MAC address
-      }
-    }
-  };
 
 
   @Override
@@ -176,8 +166,13 @@ public class ObdModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void startScan() {
-    IntentFilter bluetoothFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-    context.registerReceiver(mReceiver, bluetoothFilter);
+    Activity activity = context.getCurrentActivity();
+    int requestCode = 1;
+    Intent discoverableIntent =
+      new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+    discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+    activity.startActivityForResult(discoverableIntent, requestCode);
+
     bluetoothAdapter.startDiscovery();
   }
 
