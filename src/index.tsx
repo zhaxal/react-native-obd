@@ -17,34 +17,6 @@ const Obd = NativeModules.Obd
       }
     );
 
-export function multiply(a: number, b: number): Promise<number> {
-  return Obd.multiply(a, b);
-}
-
-export function initializeBluetooth(): Promise<boolean> {
-  return Obd.initializeBluetooth();
-}
-
 export function getPairedDevices(): Promise<Array<object>> {
   return Obd.getPairedDevices();
-}
-
-export function startScan(): void {
-  return Obd.startScan();
-}
-
-export function stopScan(): void {
-  return Obd.stopScan();
-}
-
-export function getScannedDevices(): Promise<Array<object>> {
-  return Obd.getScannedDevices();
-}
-
-export function getValue(): Promise<number> {
-  return Obd.getValue();
-}
-
-export function updateValue(value: number): void {
-  return Obd.updateValue(value);
 }
