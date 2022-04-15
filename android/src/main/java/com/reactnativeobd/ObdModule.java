@@ -68,6 +68,12 @@ public class ObdModule extends ReactContextBaseJavaModule {
 
   public static native String socketCheck();
 
+  @ReactMethod
+  public void isConnected(Promise promise){
+    Boolean res = bluetoothService.isConnected();
+    promise.resolve(res);
+  }
 
+  public static native boolean isConnected();
 
 }

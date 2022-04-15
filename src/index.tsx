@@ -37,4 +37,8 @@ export function socketCheck(): Promise<string> {
   return Obd.socketCheck();
 }
 
+export function isConnected(): Promise<boolean> {
+  return Obd.isConnected();
+}
+
 export { Obd };
