@@ -25,4 +25,12 @@ export function enableBluetooth(): void {
   return Obd.enableBluetooth();
 }
 
+export function connectDevice(address: string): void {
+  return Obd.connectDevice(address);
+}
+
+export function trackRPM(): void {
+  return Obd.trackRPM();
+}
+
 export { Obd };

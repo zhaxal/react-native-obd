@@ -124,8 +124,7 @@ public class BluetoothService {
     }
   }
 
-  public void test() throws IOException, InterruptedException {
-
-
+  public void trackRPM(){
+    new Handler().post(rpmRunnable);
   }
 }

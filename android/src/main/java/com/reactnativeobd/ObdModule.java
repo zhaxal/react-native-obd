@@ -13,6 +13,8 @@ import com.reactnativeobd.services.BluetoothService;
 
 import org.json.JSONException;
 
+import java.io.IOException;
+
 
 @ReactModule(name = ObdModule.NAME)
 public class ObdModule extends ReactContextBaseJavaModule {
@@ -46,6 +48,16 @@ public class ObdModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void enableBluetooth() {
     bluetoothService.enableBluetooth();
+  }
+
+  @ReactMethod
+  public void trackRPM() {
+    bluetoothService.trackRPM();
+  }
+
+  @ReactMethod
+  public void connectDevice(String address) throws IOException {
+    bluetoothService.connectDevice(address);
   }
 
 
