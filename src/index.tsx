@@ -33,4 +33,8 @@ export function trackRPM(): void {
   return Obd.trackRPM();
 }
 
+export function socketCheck(): Promise<string> {
+  return Obd.socketCheck();
+}
+
 export { Obd };

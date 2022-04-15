@@ -124,6 +124,13 @@ public class BluetoothService {
     }
   }
 
+  public String socketCheck() throws IOException, InterruptedException {
+    RPMCommand rpmCommand = new RPMCommand();
+    rpmCommand.run(socket.getInputStream(), socket.getOutputStream());
+
+    return rpmCommand.getFormattedResult();
+  }
+
   public void trackRPM(){
     new Handler().post(rpmRunnable);
   }

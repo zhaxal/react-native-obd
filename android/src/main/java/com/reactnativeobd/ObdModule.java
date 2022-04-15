@@ -60,6 +60,14 @@ public class ObdModule extends ReactContextBaseJavaModule {
     bluetoothService.connectDevice(address);
   }
 
+  @ReactMethod
+  public void socketCheck(Promise promise) throws IOException, InterruptedException {
+    String res = bluetoothService.socketCheck();
+    promise.resolve(res);
+  }
+
+  public static native String socketCheck();
+
 
 
 }
