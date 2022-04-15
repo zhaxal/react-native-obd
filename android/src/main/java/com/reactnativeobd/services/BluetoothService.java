@@ -118,10 +118,15 @@ public class BluetoothService {
         String deviceHardwareAddress = device.getAddress(); // MAC address
         if (address.equals(deviceHardwareAddress)) {
           socket = device.createRfcommSocketToServiceRecord(MY_UUID);
+          socket.connect();
         }
       }
 
     }
+  }
+
+  public Boolean isConnected(){
+    return socket.isConnected();
   }
 
   public String socketCheck() throws IOException, InterruptedException {
