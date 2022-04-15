@@ -60,16 +60,15 @@ public class BluetoothService {
     }
   };
 
-  private void enableBluetooth() {
-    Activity activity = context.getCurrentActivity();
-    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-    activity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+  public void enableBluetooth() {
+    if (!bluetoothAdapter.isEnabled()) {
+      Activity activity = context.getCurrentActivity();
+      Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+      activity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+    }
   }
 
   public WritableArray getPairedDevices() throws JSONException {
-    if (!bluetoothAdapter.isEnabled()) {
-      enableBluetooth();
-    }
     pairedDevices = bluetoothAdapter.getBondedDevices();
     Gson g = new Gson();
     WritableArray array = new WritableNativeArray();

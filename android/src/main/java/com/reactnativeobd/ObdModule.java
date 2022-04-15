@@ -2,8 +2,6 @@ package com.reactnativeobd;
 
 
 import androidx.annotation.NonNull;
-
-
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -44,7 +42,12 @@ public class ObdModule extends ReactContextBaseJavaModule {
   }
 
   public static native WritableArray getPairedDevices();
-  
+
+  @ReactMethod
+  public void enableBluetooth() {
+    bluetoothService.enableBluetooth();
+  }
+
 
 
 }

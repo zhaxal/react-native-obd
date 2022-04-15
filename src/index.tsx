@@ -21,4 +21,8 @@ export function getPairedDevices(): Promise<Array<object>> {
   return Obd.getPairedDevices();
 }
 
+export function enableBluetooth(): void {
+  return Obd.enableBluetooth();
+}
+
 export { Obd };
