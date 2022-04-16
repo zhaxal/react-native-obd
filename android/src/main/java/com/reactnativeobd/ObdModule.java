@@ -3,6 +3,7 @@ package com.reactnativeobd;
 
 import androidx.annotation.NonNull;
 
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -81,7 +82,7 @@ public class ObdModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void getArrObj(Promise promise) {
-    WritableMap object = new WritableNativeMap();
+    WritableMap object = Arguments.createMap();
     object.putString("test", "test");
     object.putString("test1", "test1");
 
