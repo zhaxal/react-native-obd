@@ -10,6 +10,7 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.module.annotations.ReactModule;
 import com.reactnativeobd.services.BluetoothService;
+import com.reactnativeobd.services.ObdService;
 
 import org.json.JSONException;
 
@@ -20,14 +21,14 @@ import java.io.IOException;
 public class ObdModule extends ReactContextBaseJavaModule {
   public static final String NAME = "Obd";
 
-  private BluetoothService bluetoothService;
-  private ReactApplicationContext context;
+  private final BluetoothService bluetoothService;
+  private final ObdService obdService;
+
 
   public ObdModule(ReactApplicationContext context) {
     super(context);
-    this.context = context;
     this.bluetoothService = new BluetoothService(context);
-
+    this.obdService = new ObdService(bluetoothService, context);
   }
 
   @Override
@@ -52,7 +53,7 @@ public class ObdModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void trackRPM() {
-    bluetoothService.trackRPM();
+    obdService.trackRPM();
   }
 
   @ReactMethod
