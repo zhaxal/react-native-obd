@@ -16,6 +16,8 @@ public class ObdService {
 
   public ObdService(BluetoothService bluetoothService, ReactApplicationContext context){
     this.socket = bluetoothService.socket;
+    this.rpmCommand = new RPMCommand();
+    this.context = context;
   }
 
   private final Runnable rpmRunnable = new Runnable() {

@@ -45,20 +45,20 @@ public class BluetoothService {
     this.bluetoothAdapter = bluetoothManager.getAdapter();
   }
 
-//  private final Runnable rpmRunnable = new Runnable() {
-//    public void run() {
-//      try {
-//        rpmCommand.run(socket.getInputStream(), socket.getOutputStream());
-//        context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("rpmUpdate", rpmCommand.getFormattedResult());
-//      } catch (IOException e) {
-//        e.printStackTrace();
-//      } catch (InterruptedException e) {
-//        e.printStackTrace();
-//      }
-//      // run again in period defined in preferences
-//      new Handler().postDelayed(rpmRunnable, 1000);
-//    }
-//  };
+  private final Runnable rpmRunnable = new Runnable() {
+    public void run() {
+      try {
+        rpmCommand.run(socket.getInputStream(), socket.getOutputStream());
+        context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("rpmUpdate", rpmCommand.getFormattedResult());
+      } catch (IOException e) {
+        e.printStackTrace();
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+      // run again in period defined in preferences
+      new Handler().postDelayed(rpmRunnable, 1000);
+    }
+  };
 
   public void enableBluetooth() {
     if (!bluetoothAdapter.isEnabled()) {
@@ -136,7 +136,7 @@ public class BluetoothService {
     return rpmCommand.getFormattedResult();
   }
 
-//  public void trackRPM(){
-//    new Handler().post(rpmRunnable);
-//  }
+  public void trackRPM(){
+    new Handler().post(rpmRunnable);
+  }
 }
