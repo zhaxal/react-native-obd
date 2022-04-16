@@ -22,13 +22,13 @@ public class ObdModule extends ReactContextBaseJavaModule {
   public static final String NAME = "Obd";
 
   private final BluetoothService bluetoothService;
-  
+  private final ObdService obdService;
 
 
   public ObdModule(ReactApplicationContext context) {
     super(context);
     this.bluetoothService = new BluetoothService(context);
-    
+    this.obdService = new ObdService(bluetoothService, context);
   }
 
   @Override
@@ -53,7 +53,7 @@ public class ObdModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void trackRPM() {
-    bluetoothService.obdService.trackRPM();
+    obdService.trackRPM();
   }
 
   @ReactMethod
