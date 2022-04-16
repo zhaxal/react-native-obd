@@ -1,2 +1,5 @@
-package com.reactnativeobd.models;public class ObdData {
+package com.reactnativeobd.models;
+
+public class ObdData {
+
 }

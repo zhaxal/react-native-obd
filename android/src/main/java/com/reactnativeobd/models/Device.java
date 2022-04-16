@@ -1,4 +1,4 @@
-package com.reactnativeobd;
+package com.reactnativeobd.models;
 
 public class Device {
   String name;

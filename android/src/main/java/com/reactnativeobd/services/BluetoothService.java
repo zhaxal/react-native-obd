@@ -1,5 +1,6 @@
 package com.reactnativeobd.services;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -10,16 +11,17 @@ import android.content.Intent;
 import android.os.Handler;
 
 import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableNativeMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeArray;
 import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
-import com.github.pires.obd.commands.ObdCommand;
 import com.github.pires.obd.commands.engine.RPMCommand;
-import com.github.pires.obd.commands.protocol.EchoOffCommand;
 import com.google.gson.Gson;
-import com.reactnativeobd.Device;
+import com.reactnativeobd.models.Device;
+import com.reactnativeobd.models.ObdCommands;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,7 +38,8 @@ public class BluetoothService {
   private Set<BluetoothDevice> pairedDevices;
   private ReactApplicationContext context;
   private RPMCommand rpmCommand;
-  public BluetoothSocket socket;
+
+  private BluetoothSocket socket;
 
   public BluetoothService(ReactApplicationContext context) {
     this.context = context;
@@ -46,8 +49,18 @@ public class BluetoothService {
   }
 
   private final Runnable rpmRunnable = new Runnable() {
+
     public void run() {
       try {
+//        ObdCommands.getCommands().forEach((command) -> {
+//        });
+
+//        WritableMap object = new WritableNativeMap();
+//        object.putString("test", "test");
+//
+//        WritableMap map = new WritableNativeMap();
+//        map.putMap("object", object);
+
         rpmCommand.run(socket.getInputStream(), socket.getOutputStream());
         context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("rpmUpdate", rpmCommand.getFormattedResult());
       } catch (IOException e) {
@@ -125,7 +138,7 @@ public class BluetoothService {
     }
   }
 
-  public Boolean isConnected(){
+  public Boolean isConnected() {
     return socket.isConnected();
   }
 
@@ -136,7 +149,7 @@ public class BluetoothService {
     return rpmCommand.getFormattedResult();
   }
 
-  public void trackRPM(){
+  public void trackRPM() {
     new Handler().post(rpmRunnable);
   }
 }

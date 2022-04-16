@@ -2,12 +2,15 @@ package com.reactnativeobd;
 
 
 import androidx.annotation.NonNull;
+
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 
 import com.facebook.react.bridge.WritableArray;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.module.annotations.ReactModule;
 import com.reactnativeobd.services.BluetoothService;
 import com.reactnativeobd.services.ObdService;
@@ -22,13 +25,12 @@ public class ObdModule extends ReactContextBaseJavaModule {
   public static final String NAME = "Obd";
 
   private final BluetoothService bluetoothService;
-  private final ObdService obdService;
 
 
   public ObdModule(ReactApplicationContext context) {
     super(context);
     this.bluetoothService = new BluetoothService(context);
-    this.obdService = new ObdService(bluetoothService, context);
+
   }
 
   @Override
@@ -53,7 +55,7 @@ public class ObdModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void trackRPM() {
-    obdService.trackRPM();
+    bluetoothService.trackRPM();
   }
 
   @ReactMethod
@@ -70,11 +72,26 @@ public class ObdModule extends ReactContextBaseJavaModule {
   public static native String socketCheck();
 
   @ReactMethod
-  public void isConnected(Promise promise){
+  public void isConnected(Promise promise) {
     Boolean res = bluetoothService.isConnected();
     promise.resolve(res);
   }
 
   public static native boolean isConnected();
+
+  @ReactMethod
+  public void getArrObj(Promise promise) {
+    WritableMap object = new WritableNativeMap();
+    object.putString("test", "test");
+    object.putString("test1", "test1");
+
+    WritableMap map = new WritableNativeMap();
+    map.putMap("object", object);
+    map.putMap("object1", object);
+
+    promise.resolve(map);
+  }
+
+  public static native WritableMap getArrObj();
 
 }

@@ -41,4 +41,8 @@ export function isConnected(): Promise<boolean> {
   return Obd.isConnected();
 }
 
+export function getArrObj(): Promise<Array<object>> {
+  return Obd.getArrObj();
+}
+
 export { Obd };
