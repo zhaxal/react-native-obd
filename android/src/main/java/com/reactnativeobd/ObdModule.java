@@ -116,7 +116,6 @@ public class ObdModule extends ReactContextBaseJavaModule {
     WritableMap wm = convertJsonToMap(jo);
     WritableMap map = new WritableNativeMap();
     map.putMap("object", wm);
-    map.putMap("object1", wm);
 
     promise.resolve(map);
   }
