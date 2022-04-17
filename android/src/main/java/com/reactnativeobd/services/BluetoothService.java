@@ -18,6 +18,7 @@ import com.facebook.react.bridge.WritableNativeArray;
 import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.github.pires.obd.commands.ObdCommand;
+import com.github.pires.obd.commands.engine.RPMCommand;
 import com.google.gson.Gson;
 import com.reactnativeobd.models.Device;
 import com.reactnativeobd.models.ObdData;
@@ -42,20 +43,24 @@ public class BluetoothService {
   private final Runnable dataRunnable = new Runnable() {
     public void run() {
       try {
-        Gson g = new Gson();
-        WritableMap data = new WritableNativeMap();
+//        Gson g = new Gson();
+//        WritableMap data = new WritableNativeMap();
+//
+//        ArrayList<ObdCommand> commands = ObdService.getCommands();
+//        for (int i = 0; i < commands.size(); i++) {
+//          ObdCommand command = commands.get(i);
+//          command.run(socket.getInputStream(), socket.getOutputStream());
+//          JSONObject jo = new JSONObject(g.toJson(new ObdData(command.getName(), command.getFormattedResult())));
+//          WritableMap wm = convertJsonToMap(jo);
+//          data.putMap(ObdService.LookUpCommand(command.getName()), wm);
+//        }
 
-        ArrayList<ObdCommand> commands = ObdService.getCommands();
-        for (int i = 0; i < commands.size(); i++) {
-          ObdCommand command = commands.get(i);
-          command.run(socket.getInputStream(), socket.getOutputStream());
-          JSONObject jo = new JSONObject(g.toJson(new ObdData(command.getName(), command.getFormattedResult())));
-          WritableMap wm = convertJsonToMap(jo);
-          data.putMap(ObdService.LookUpCommand(command.getName()), wm);
-        }
+        RPMCommand rpmCommand = new RPMCommand();
+        rpmCommand.run(socket.getInputStream(), socket.getOutputStream());
 
-        context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("liveData", data);
-      } catch (IOException | InterruptedException | JSONException e) {
+
+        context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("liveData", rpmCommand.getFormattedResult());
+      } catch (IOException | InterruptedException e) {
         e.printStackTrace();
       }
 
