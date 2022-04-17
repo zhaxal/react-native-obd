@@ -1,12 +1,10 @@
 package com.reactnativeobd.models;
 
 public class ObdData {
-  String id;
   String name;
   String result;
 
-  public ObdData(String id, String name, String result){
-    this.id = id;
+  public ObdData(String name, String result){
     this.name = name;
     this.result = result;
   }

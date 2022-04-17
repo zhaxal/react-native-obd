@@ -1,32 +1,32 @@
 package com.reactnativeobd.services;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Handler;
 
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReadableMap;
-import com.facebook.react.bridge.ReadableNativeMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeArray;
 import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
-import com.github.pires.obd.commands.engine.RPMCommand;
+import com.github.pires.obd.commands.ObdCommand;
 import com.google.gson.Gson;
 import com.reactnativeobd.models.Device;
-import com.reactnativeobd.models.ObdCommands;
+import com.reactnativeobd.models.ObdData;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
@@ -34,44 +34,69 @@ import java.util.UUID;
 public class BluetoothService {
   private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
   private final static int REQUEST_ENABLE_BT = 1;
-  private BluetoothAdapter bluetoothAdapter;
+  private final BluetoothAdapter bluetoothAdapter;
   private Set<BluetoothDevice> pairedDevices;
-  private ReactApplicationContext context;
-  private RPMCommand rpmCommand;
-
+  private final ReactApplicationContext context;
   private BluetoothSocket socket;
+
+  private final Runnable dataRunnable = new Runnable() {
+    public void run() {
+      try {
+        Gson g = new Gson();
+        WritableMap data = new WritableNativeMap();
+
+        ArrayList<ObdCommand> commands = ObdService.getCommands();
+        for (int i = 0; i < commands.size(); i++) {
+          ObdCommand command = commands.get(i);
+          command.run(socket.getInputStream(), socket.getOutputStream());
+          JSONObject jo = new JSONObject(g.toJson(new ObdData(command.getName(), command.getFormattedResult())));
+          WritableMap wm = convertJsonToMap(jo);
+          data.putMap(ObdService.LookUpCommand(command.getName()), wm);
+        }
+
+        context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("liveData", data);
+      } catch (IOException | InterruptedException | JSONException e) {
+        e.printStackTrace();
+      }
+
+      new Handler().postDelayed(dataRunnable, 1000);
+    }
+  };
+
+  private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+    @Override
+    public void onReceive(Context cxt, Intent intent) {
+      String action = intent.getAction();
+
+      if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
+        context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("bluetoothConnected", true);
+        //Device is now connected
+      } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
+        context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("bluetoothConnected", false);
+        //Device has disconnected
+      }
+    }
+  };
 
   public BluetoothService(ReactApplicationContext context) {
     this.context = context;
     BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
-    this.rpmCommand = new RPMCommand();
+//    IntentFilter filter = new IntentFilter();
+//    filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
+//    filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
+//    filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+//    this.context.registerReceiver(mReceiver,filter);
+    initBluetoothListener();
     this.bluetoothAdapter = bluetoothManager.getAdapter();
   }
 
-  private final Runnable rpmRunnable = new Runnable() {
-
-    public void run() {
-      try {
-//        ObdCommands.getCommands().forEach((command) -> {
-//        });
-
-//        WritableMap object = new WritableNativeMap();
-//        object.putString("test", "test");
-//
-//        WritableMap map = new WritableNativeMap();
-//        map.putMap("object", object);
-
-        rpmCommand.run(socket.getInputStream(), socket.getOutputStream());
-        context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("rpmUpdate", rpmCommand.getFormattedResult());
-      } catch (IOException e) {
-        e.printStackTrace();
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
-      // run again in period defined in preferences
-      new Handler().postDelayed(rpmRunnable, 1000);
-    }
-  };
+  private void initBluetoothListener() {
+    IntentFilter filter = new IntentFilter();
+    filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
+    filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
+    filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+    this.context.registerReceiver(mReceiver, filter);
+  }
 
   public void enableBluetooth() {
     if (!bluetoothAdapter.isEnabled()) {
@@ -142,14 +167,7 @@ public class BluetoothService {
     return socket.isConnected();
   }
 
-  public String socketCheck() throws IOException, InterruptedException {
-    RPMCommand rpmCommand = new RPMCommand();
-    rpmCommand.run(socket.getInputStream(), socket.getOutputStream());
-
-    return rpmCommand.getFormattedResult();
-  }
-
-  public void trackRPM() {
-    new Handler().post(rpmRunnable);
+  public void trackData() {
+    new Handler().post(dataRunnable);
   }
 }

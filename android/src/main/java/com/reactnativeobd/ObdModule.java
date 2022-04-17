@@ -59,22 +59,10 @@ public class ObdModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void trackRPM() {
-    bluetoothService.trackRPM();
-  }
-
-  @ReactMethod
   public void connectDevice(String address) throws IOException {
     bluetoothService.connectDevice(address);
   }
 
-  @ReactMethod
-  public void socketCheck(Promise promise) throws IOException, InterruptedException {
-    String res = bluetoothService.socketCheck();
-    promise.resolve(res);
-  }
-
-  public static native String socketCheck();
 
   @ReactMethod
   public void isConnected(Promise promise) {
@@ -84,42 +72,7 @@ public class ObdModule extends ReactContextBaseJavaModule {
 
   public static native boolean isConnected();
 
-  private static WritableMap convertJsonToMap(JSONObject jsonObject) throws JSONException {
-    WritableMap map = new WritableNativeMap();
 
-    Iterator<String> iterator = jsonObject.keys();
-    while (iterator.hasNext()) {
-      String key = iterator.next();
-      Object value = jsonObject.get(key);
-      if (value instanceof JSONObject) {
-        map.putMap(key, convertJsonToMap((JSONObject) value));
-      } else if (value instanceof Boolean) {
-        map.putBoolean(key, (Boolean) value);
-      } else if (value instanceof Integer) {
-        map.putInt(key, (Integer) value);
-      } else if (value instanceof Double) {
-        map.putDouble(key, (Double) value);
-      } else if (value instanceof String) {
-        map.putString(key, (String) value);
-      } else {
-        map.putString(key, value.toString());
-      }
-    }
-    return map;
-  }
 
-  @ReactMethod
-  public void getArrObj(Promise promise) throws JSONException {
-    Gson g = new Gson();
-
-    JSONObject jo = new JSONObject(g.toJson(new ObdData("1","blya", "200rpm")));
-    WritableMap wm = convertJsonToMap(jo);
-    WritableMap map = new WritableNativeMap();
-    map.putMap("object", wm);
-
-    promise.resolve(map);
-  }
-
-  public static native WritableMap getArrObj();
 
 }

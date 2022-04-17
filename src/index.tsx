@@ -1,4 +1,5 @@
 import { NativeModules, Platform } from 'react-native';
+import { BluetoothProvider, useBluetooth } from './contexts/bluetooth-context';
 
 const LINKING_ERROR =
   `The package 'react-native-obd' doesn't seem to be linked. Make sure: \n\n` +
@@ -41,8 +42,8 @@ export function isConnected(): Promise<boolean> {
   return Obd.isConnected();
 }
 
-export function getArrObj(): Promise<Array<object>> {
+export function getArrObj(): Promise<object> {
   return Obd.getArrObj();
 }
 
-export { Obd };
+export { Obd, BluetoothProvider, useBluetooth };
