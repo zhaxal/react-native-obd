@@ -30,20 +30,12 @@ export function connectDevice(address: string): void {
   return Obd.connectDevice(address);
 }
 
-export function trackRPM(): void {
-  return Obd.trackRPM();
+export function startLiveData(): void {
+  return Obd.startLiveData();
 }
 
-export function socketCheck(): Promise<string> {
-  return Obd.socketCheck();
-}
-
-export function isConnected(): Promise<boolean> {
-  return Obd.isConnected();
-}
-
-export function getArrObj(): Promise<object> {
-  return Obd.getArrObj();
+export function stopLiveData(): void {
+  return Obd.stopLiveData();
 }
 
 export { Obd, BluetoothProvider, useBluetooth };

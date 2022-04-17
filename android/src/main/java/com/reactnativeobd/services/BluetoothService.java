@@ -81,11 +81,6 @@ public class BluetoothService {
   public BluetoothService(ReactApplicationContext context) {
     this.context = context;
     BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
-//    IntentFilter filter = new IntentFilter();
-//    filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
-//    filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
-//    filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
-//    this.context.registerReceiver(mReceiver,filter);
     initBluetoothListener();
     this.bluetoothAdapter = bluetoothManager.getAdapter();
   }
@@ -163,11 +158,17 @@ public class BluetoothService {
     }
   }
 
-  public Boolean isConnected() {
-    return socket.isConnected();
+  public void disconnectDevice() throws IOException {
+    socket.close();
+    stopLiveData();
+    socket = null;
   }
 
-  public void trackData() {
+  public void startLiveData() {
     new Handler().post(dataRunnable);
+  }
+
+  public void stopLiveData() {
+    new Handler().removeCallbacks(dataRunnable);
   }
 }

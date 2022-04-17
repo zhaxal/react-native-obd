@@ -63,14 +63,22 @@ public class ObdModule extends ReactContextBaseJavaModule {
     bluetoothService.connectDevice(address);
   }
 
-
   @ReactMethod
-  public void isConnected(Promise promise) {
-    Boolean res = bluetoothService.isConnected();
-    promise.resolve(res);
+  public void disconnectDevice() throws IOException {
+    bluetoothService.disconnectDevice();
   }
 
-  public static native boolean isConnected();
+  @ReactMethod
+  public void startLiveData() throws IOException {
+    bluetoothService.startLiveData();
+  }
+
+  @ReactMethod
+  public void stopLiveData() throws IOException {
+    bluetoothService.stopLiveData();
+  }
+
+
 
 
 
