@@ -3,7 +3,6 @@ package com.reactnativeobd;
 
 import androidx.annotation.NonNull;
 
-import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -13,12 +12,17 @@ import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.module.annotations.ReactModule;
+import com.google.gson.Gson;
+import com.reactnativeobd.models.Device;
+import com.reactnativeobd.models.ObdData;
 import com.reactnativeobd.services.BluetoothService;
 import com.reactnativeobd.services.ObdService;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 
 @ReactModule(name = ObdModule.NAME)
@@ -80,15 +84,39 @@ public class ObdModule extends ReactContextBaseJavaModule {
 
   public static native boolean isConnected();
 
-  @ReactMethod
-  public void getArrObj(Promise promise) {
-    WritableMap object = Arguments.createMap();
-    object.putString("test", "test");
-    object.putString("test1", "test1");
-
+  private static WritableMap convertJsonToMap(JSONObject jsonObject) throws JSONException {
     WritableMap map = new WritableNativeMap();
-    map.putMap("object", object);
-    map.putMap("object1", object);
+
+    Iterator<String> iterator = jsonObject.keys();
+    while (iterator.hasNext()) {
+      String key = iterator.next();
+      Object value = jsonObject.get(key);
+      if (value instanceof JSONObject) {
+        map.putMap(key, convertJsonToMap((JSONObject) value));
+      } else if (value instanceof Boolean) {
+        map.putBoolean(key, (Boolean) value);
+      } else if (value instanceof Integer) {
+        map.putInt(key, (Integer) value);
+      } else if (value instanceof Double) {
+        map.putDouble(key, (Double) value);
+      } else if (value instanceof String) {
+        map.putString(key, (String) value);
+      } else {
+        map.putString(key, value.toString());
+      }
+    }
+    return map;
+  }
+
+  @ReactMethod
+  public void getArrObj(Promise promise) throws JSONException {
+    Gson g = new Gson();
+
+    JSONObject jo = new JSONObject(g.toJson(new ObdData("1","blya", "200rpm")));
+    WritableMap wm = convertJsonToMap(jo);
+    WritableMap map = new WritableNativeMap();
+    map.putMap("object", wm);
+    map.putMap("object1", wm);
 
     promise.resolve(map);
   }
