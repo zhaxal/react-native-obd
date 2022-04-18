@@ -1,35 +1,13 @@
 package com.reactnativeobd.services;
 
 import com.github.pires.obd.commands.ObdCommand;
-import com.github.pires.obd.commands.SpeedCommand;
-import com.github.pires.obd.commands.control.DistanceMILOnCommand;
-import com.github.pires.obd.commands.control.DtcNumberCommand;
-import com.github.pires.obd.commands.control.EquivalentRatioCommand;
-import com.github.pires.obd.commands.control.ModuleVoltageCommand;
-import com.github.pires.obd.commands.control.TimingAdvanceCommand;
-import com.github.pires.obd.commands.control.TroubleCodesCommand;
-import com.github.pires.obd.commands.control.VinCommand;
-import com.github.pires.obd.commands.engine.LoadCommand;
-import com.github.pires.obd.commands.engine.MassAirFlowCommand;
-import com.github.pires.obd.commands.engine.OilTempCommand;
 import com.github.pires.obd.commands.engine.RPMCommand;
-import com.github.pires.obd.commands.engine.RuntimeCommand;
-import com.github.pires.obd.commands.engine.ThrottlePositionCommand;
-import com.github.pires.obd.commands.fuel.AirFuelRatioCommand;
-import com.github.pires.obd.commands.fuel.ConsumptionRateCommand;
-import com.github.pires.obd.commands.fuel.FindFuelTypeCommand;
-import com.github.pires.obd.commands.fuel.FuelLevelCommand;
-import com.github.pires.obd.commands.fuel.FuelTrimCommand;
-import com.github.pires.obd.commands.fuel.WidebandAirFuelRatioCommand;
-import com.github.pires.obd.commands.pressure.BarometricPressureCommand;
-import com.github.pires.obd.commands.pressure.FuelPressureCommand;
-import com.github.pires.obd.commands.pressure.FuelRailPressureCommand;
-import com.github.pires.obd.commands.pressure.IntakeManifoldPressureCommand;
-import com.github.pires.obd.commands.temperature.AirIntakeTemperatureCommand;
-import com.github.pires.obd.commands.temperature.AmbientAirTemperatureCommand;
-import com.github.pires.obd.commands.temperature.EngineCoolantTemperatureCommand;
+import com.github.pires.obd.commands.protocol.EchoOffCommand;
+import com.github.pires.obd.commands.protocol.HeadersOffCommand;
+import com.github.pires.obd.commands.protocol.LineFeedOffCommand;
+import com.github.pires.obd.commands.protocol.ObdResetCommand;
 import com.github.pires.obd.enums.AvailableCommandNames;
-import com.github.pires.obd.enums.FuelTrim;
+import com.reactnativeobd.models.SetDefaultsCommand;
 
 
 import java.util.ArrayList;
@@ -43,6 +21,17 @@ public class ObdService {
     return txt;
   }
 
+  public static ArrayList<ObdCommand> getInitCommands() {
+    ArrayList<ObdCommand> cmds = new ArrayList<>();
+    cmds.add(new SetDefaultsCommand());
+    cmds.add(new ObdResetCommand());
+    cmds.add(new EchoOffCommand());
+    cmds.add(new LineFeedOffCommand());
+    cmds.add(new SetDefaultsCommand());
+    cmds.add(new HeadersOffCommand());
+
+    return cmds;
+  }
 
   public static ArrayList<ObdCommand> getCommands() {
     ArrayList<ObdCommand> cmds = new ArrayList<>();

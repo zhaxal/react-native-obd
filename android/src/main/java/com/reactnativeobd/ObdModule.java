@@ -46,7 +46,7 @@ public class ObdModule extends ReactContextBaseJavaModule {
 
 
   @ReactMethod
-  public void getPairedDevices(Promise promise) throws JSONException {
+  public void getPairedDevices(Promise promise) {
     WritableArray res = bluetoothService.getPairedDevices();
     promise.resolve(res);
   }
@@ -59,12 +59,12 @@ public class ObdModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void connectDevice(String address) throws IOException {
+  public void connectDevice(String address) {
     bluetoothService.connectDevice(address);
   }
 
   @ReactMethod
-  public void disconnectDevice() throws IOException {
+  public void disconnectDevice() {
     bluetoothService.disconnectDevice();
   }
 

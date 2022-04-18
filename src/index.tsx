@@ -1,5 +1,5 @@
 import { NativeModules, Platform } from 'react-native';
-import { BluetoothProvider, useBluetooth } from './contexts/bluetooth-context';
+import { ObdProvider, useObd } from './contexts/obd-context';
 
 const LINKING_ERROR =
   `The package 'react-native-obd' doesn't seem to be linked. Make sure: \n\n` +
@@ -38,4 +38,4 @@ export function stopLiveData(): void {
   return Obd.stopLiveData();
 }
 
-export { Obd, BluetoothProvider, useBluetooth };
+export { Obd, ObdProvider, useObd };

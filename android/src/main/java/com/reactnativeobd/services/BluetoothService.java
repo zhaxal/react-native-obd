@@ -56,6 +56,8 @@ public class BluetoothService {
 
         context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("liveData", data);
       } catch (IOException | InterruptedException | JSONException e) {
+        context.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit("liveDataErr", e.getMessage());
+        stopLiveData();
         e.printStackTrace();
       }
 
@@ -101,23 +103,41 @@ public class BluetoothService {
     }
   }
 
-  public WritableArray getPairedDevices() throws JSONException {
+  public WritableArray getPairedDevices() {
+
     pairedDevices = bluetoothAdapter.getBondedDevices();
     Gson g = new Gson();
     WritableArray array = new WritableNativeArray();
+    try {
+      if (pairedDevices.size() > 0) {
+        // There are paired devices. Get the name and address of each paired device.
+        for (BluetoothDevice device : pairedDevices) {
+          String deviceName = device.getName();
+          String deviceHardwareAddress = device.getAddress(); // MAC address
+          JSONObject jo = null;
 
-    if (pairedDevices.size() > 0) {
-      // There are paired devices. Get the name and address of each paired device.
-      for (BluetoothDevice device : pairedDevices) {
-        String deviceName = device.getName();
-        String deviceHardwareAddress = device.getAddress(); // MAC address
-        JSONObject jo = new JSONObject(g.toJson(new Device(deviceName, deviceHardwareAddress)));
-        WritableMap wm = convertJsonToMap(jo);
-        array.pushMap(wm);
+          jo = new JSONObject(g.toJson(new Device(deviceName, deviceHardwareAddress)));
+
+          WritableMap wm = convertJsonToMap(jo);
+          array.pushMap(wm);
+        }
+
       }
 
+    } catch (JSONException e) {
+      e.printStackTrace();
     }
+
     return array;
+
+  }
+
+  private static void runInitCommands(BluetoothSocket socket) throws IOException, InterruptedException {
+    ArrayList<ObdCommand> commands = ObdService.getInitCommands();
+    for (int i = 0; i < commands.size(); i++) {
+      ObdCommand command = commands.get(i);
+      command.run(socket.getInputStream(), socket.getOutputStream());
+    }
   }
 
   private static WritableMap convertJsonToMap(JSONObject jsonObject) throws JSONException {
@@ -144,24 +164,36 @@ public class BluetoothService {
     return map;
   }
 
-  public void connectDevice(String address) throws IOException {
-    if (pairedDevices.size() > 0) {
-      // There are paired devices. Get the name and address of each paired device.
-      for (BluetoothDevice device : pairedDevices) {
-        String deviceHardwareAddress = device.getAddress(); // MAC address
-        if (address.equals(deviceHardwareAddress)) {
-          socket = device.createRfcommSocketToServiceRecord(MY_UUID);
-          socket.connect();
-        }
-      }
+  public void connectDevice(String address) {
+    try {
+      if (pairedDevices.size() > 0) {
+        // There are paired devices. Get the name and address of each paired device.
+        for (BluetoothDevice device : pairedDevices) {
+          String deviceHardwareAddress = device.getAddress(); // MAC address
+          if (address.equals(deviceHardwareAddress)) {
 
+            socket = device.createRfcommSocketToServiceRecord(MY_UUID);
+
+            socket.connect();
+
+            runInitCommands(socket);
+          }
+        }
+
+      }
+    } catch (IOException | InterruptedException e) {
+      e.printStackTrace();
     }
   }
 
-  public void disconnectDevice() throws IOException {
-    socket.close();
-    stopLiveData();
-    socket = null;
+  public void disconnectDevice() {
+    try {
+      socket.close();
+      stopLiveData();
+      socket = null;
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   public void startLiveData() {
