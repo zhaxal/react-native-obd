@@ -54,10 +54,10 @@ public class ObdService {
 
     // Engine
 //    cmds.add(new LoadCommand());
-//    cmds.add(new RPMCommand());
+  //  cmds.add(new RPMCommand());
 //    cmds.add(new RuntimeCommand());
 //    cmds.add(new MassAirFlowCommand());
-//    cmds.add(new ThrottlePositionCommand());
+    cmds.add(new ThrottlePositionCommand());
 //
 //    // Fuel
 //    cmds.add(new FindFuelTypeCommand());
@@ -73,7 +73,7 @@ public class ObdService {
 //    cmds.add(new FuelTrimCommand(FuelTrim.SHORT_TERM_BANK_2));
 //    cmds.add(new AirFuelRatioCommand());
 //    cmds.add(new WidebandAirFuelRatioCommand());
- //  cmds.add(new OilTempCommand());
+    //  cmds.add(new OilTempCommand());
 //
 //    // Pressure
 //    cmds.add(new BarometricPressureCommand());
