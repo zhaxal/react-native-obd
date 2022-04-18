@@ -57,7 +57,7 @@ public class ObdService {
     cmds.add(new RPMCommand());
 //    cmds.add(new RuntimeCommand());
 //    cmds.add(new MassAirFlowCommand());
-    cmds.add(new ThrottlePositionCommand());
+//    cmds.add(new ThrottlePositionCommand());
 //
 //    // Fuel
 //    cmds.add(new FindFuelTypeCommand());
