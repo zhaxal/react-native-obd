@@ -1,7 +1,9 @@
 package com.reactnativeobd.services;
 
 import com.github.pires.obd.commands.ObdCommand;
+import com.github.pires.obd.commands.engine.OilTempCommand;
 import com.github.pires.obd.commands.engine.RPMCommand;
+import com.github.pires.obd.commands.engine.ThrottlePositionCommand;
 import com.github.pires.obd.commands.protocol.EchoOffCommand;
 import com.github.pires.obd.commands.protocol.HeadersOffCommand;
 import com.github.pires.obd.commands.protocol.LineFeedOffCommand;
@@ -55,7 +57,7 @@ public class ObdService {
     cmds.add(new RPMCommand());
 //    cmds.add(new RuntimeCommand());
 //    cmds.add(new MassAirFlowCommand());
-//    cmds.add(new ThrottlePositionCommand());
+    cmds.add(new ThrottlePositionCommand());
 //
 //    // Fuel
 //    cmds.add(new FindFuelTypeCommand());
@@ -71,7 +73,7 @@ public class ObdService {
 //    cmds.add(new FuelTrimCommand(FuelTrim.SHORT_TERM_BANK_2));
 //    cmds.add(new AirFuelRatioCommand());
 //    cmds.add(new WidebandAirFuelRatioCommand());
-//    cmds.add(new OilTempCommand());
+   cmds.add(new OilTempCommand());
 //
 //    // Pressure
 //    cmds.add(new BarometricPressureCommand());
