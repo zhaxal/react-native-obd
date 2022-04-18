@@ -132,7 +132,7 @@ public class BluetoothService {
 
   }
 
-  private static void runInitCommands(BluetoothSocket socket) throws IOException, InterruptedException {
+  private void runInitCommands() throws IOException, InterruptedException {
     ArrayList<ObdCommand> commands = ObdService.getInitCommands();
     for (int i = 0; i < commands.size(); i++) {
       ObdCommand command = commands.get(i);
@@ -176,7 +176,7 @@ public class BluetoothService {
 
             socket.connect();
 
-            runInitCommands(socket);
+            runInitCommands();
           }
         }
 
@@ -201,6 +201,8 @@ public class BluetoothService {
   }
 
   public void stopLiveData() {
-    new Handler().removeCallbacks(dataRunnable);
+    Handler handler = new Handler();
+    handler.removeCallbacksAndMessages(null);
+
   }
 }
