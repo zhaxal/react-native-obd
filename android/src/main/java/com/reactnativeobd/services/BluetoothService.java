@@ -38,6 +38,7 @@ public class BluetoothService {
   private Set<BluetoothDevice> pairedDevices;
   private final ReactApplicationContext context;
   private BluetoothSocket socket;
+  private Handler handler;
 
   private final Runnable dataRunnable = new Runnable() {
     public void run() {
@@ -85,6 +86,7 @@ public class BluetoothService {
     BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
     initBluetoothListener();
     this.bluetoothAdapter = bluetoothManager.getAdapter();
+    this.handler = new Handler();
   }
 
   private void initBluetoothListener() {
@@ -197,12 +199,12 @@ public class BluetoothService {
   }
 
   public void startLiveData() {
-    new Handler().post(dataRunnable);
+    handler.post(dataRunnable);
   }
 
   public void stopLiveData() {
-    Handler handler = new Handler();
-    handler.removeCallbacksAndMessages(null);
+
+    handler.removeCallbacks(dataRunnable);
 
   }
 }
