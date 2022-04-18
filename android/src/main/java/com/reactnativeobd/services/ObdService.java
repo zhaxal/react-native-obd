@@ -73,7 +73,7 @@ public class ObdService {
 //    cmds.add(new FuelTrimCommand(FuelTrim.SHORT_TERM_BANK_2));
 //    cmds.add(new AirFuelRatioCommand());
 //    cmds.add(new WidebandAirFuelRatioCommand());
-   cmds.add(new OilTempCommand());
+ //  cmds.add(new OilTempCommand());
 //
 //    // Pressure
 //    cmds.add(new BarometricPressureCommand());
