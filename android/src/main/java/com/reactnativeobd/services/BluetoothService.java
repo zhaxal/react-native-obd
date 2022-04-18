@@ -86,7 +86,7 @@ public class BluetoothService {
     BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
     initBluetoothListener();
     this.bluetoothAdapter = bluetoothManager.getAdapter();
-    this.handler = new Handler();
+
   }
 
   private void initBluetoothListener() {
@@ -199,6 +199,7 @@ public class BluetoothService {
   }
 
   public void startLiveData() {
+    handler = new Handler();
     handler.post(dataRunnable);
   }
 
